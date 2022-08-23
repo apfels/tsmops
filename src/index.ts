@@ -1,5 +1,5 @@
-import "./index.sass"
-import "./index.html"
+import "./static/index.sass"
+import "./static/index.html"
 
 window.addEventListener("DOMContentLoaded", () => {
   const settings_btn : HTMLInputElement = document.querySelector("#settings-btn");
