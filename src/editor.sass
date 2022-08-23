@@ -1,0 +1,25 @@
+#editor-pane
+  grid-area: editor
+
+#editor-pane > header
+  text-align: left
+
+#editor-pane > header > input
+  transition-duration: 50ms
+  height: 2rem
+  width: 2rem
+  vertical-align: top
+  border: none
+  padding: 0
+  margin: 0.5rem
+  &:hover
+    transform: translateY(-0.1rem)
+  &:active
+    transform: translateY(0.1rem)
+    filter: brightness(0.5)
+
+#settings-btn
+  position: relative
+  top: 0
+  z-index: 99
+  background: url("settings.svg") center/100%

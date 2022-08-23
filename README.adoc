@@ -1,0 +1,2 @@
+= tsmops – MOPS in your Browser
+An implementation of the MOPS system in TypeScript.

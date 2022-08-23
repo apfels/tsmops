@@ -1,0 +1,39 @@
+$settings-width: 20rem
+
+#settings-pane
+  position: absolute
+  width: 20rem
+  height: 100vh
+  text-align: center
+  border-right: $default-border
+  transition-duration: 200ms
+
+.settings-hidden
+  left: calc(-1px - $settings-width)
+
+.settings-shown
+  left: 0
+
+#settings-pane hr
+  height: 1px
+  width: 100%
+  border: none
+  padding: 0
+  margin: 2rem auto
+  background: $border-color
+
+#settings-pane > main > fieldset
+  border: none
+  display: grid
+  margin: 2rem 0 0 0
+  padding: 0
+  grid-template-columns: repeat(2, auto)
+
+#git-link
+  width: 100%
+  text-align: center
+
+#git-link > img
+  margin-right: 0.5rem
+  height: 1.4rem
+  vertical-align: bottom
