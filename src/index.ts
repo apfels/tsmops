@@ -1,7 +1,7 @@
 import "./static/index.sass"
 import "./static/index.html"
 
-import { Assembler } from "./assembler";
+import { Assemble } from "./assemble";
 
 window.addEventListener("DOMContentLoaded", () => {
   const settings_btn : HTMLInputElement = document.querySelector("#settings-btn");
@@ -23,8 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   build_btn.onclick = () => {
     const code = editor_pane.querySelector("main").innerText;
-    const parser = new Assembler({ replace_mnemonics: new Map([["div","dd"]]) });
-    const exe = parser.assemble(code);
-    console.log(exe);
+    const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
+    console.log(asm.result.executable);
   };
 });
