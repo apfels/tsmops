@@ -38,6 +38,12 @@ body
 
 .pane
   background: $bg-color
+  overflow: hidden
+  display: flex
+  flex-direction: column
+
+.pane > main
+  overflow: auto
 
 .pane > header
   font-size: 1.2rem

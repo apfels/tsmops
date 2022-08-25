@@ -1,5 +1,25 @@
 #editor-pane
   grid-area: editor
+  line-height: 150%
+  border-right: $default-border
+
+#editor-pane main
+  display: grid
+  grid-template-columns: 5rem auto
+
+#editor-gutter
+  padding: 0.5rem 2.5rem 0.5rem 0.5rem
+  min-height: 1rem
+  text-align: right
+  border-right: $default-border
+
+#editor-area
+  min-height: 1rem
+  padding: 0.5rem
+  white-space: nowrap
+
+#editor-area:focus-visible
+  outline: none
 
 #editor-pane > header
   text-align: left

@@ -28,9 +28,29 @@
     <input id="end-btn" type="button">
     <input id="save-btn" type="button">
   </header>
-  <main contenteditable="true">code</main>
+  <main>
+    <div id="editor-gutter">0000</div>
+    <div id="editor-area" contenteditable="true">code</div>
+  </main>
 </div>
-<div id="vm-view"></div>
+<div id="vm-view">
+  <div class="pane" id="memory-pane">
+    <header>Memory</header>
+    <main></main>
+  </div>
+  <div class="pane" id="control-pane">
+    <header>Control</header>
+    <main></main>
+  </div>
+  <div class="pane" id="execution-pane">
+    <header>Execution</header>
+    <main></main>
+  </div>
+  <div class="pane" id="io-pane">
+    <header>IO</header>
+    <main></main>
+  </div>
+</div>
 
 </main>
 
