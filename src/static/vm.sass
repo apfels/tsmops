@@ -1,0 +1,20 @@
+#vm-view
+  display: grid
+  grid-template-areas: "mem con" "mem exe" "mem io"
+  margin: 3rem
+  gap: 3rem
+
+#vm-view .pane
+  border: $default-border
+
+#memory-pane
+  grid-area: mem
+
+#control-pane
+  grid-area: con
+
+#execution-pane
+  grid-area: exe
+
+#io-pane
+  grid-area: io
