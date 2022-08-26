@@ -29,8 +29,11 @@
     <input id="save-btn" type="button">
   </header>
   <main>
-    <div id="editor-gutter">0000</div>
-    <div id="editor-area" contenteditable="true">code</div>
+    <div id="editor-gutter">
+      <div id="editor-hints"><span class="err">!</span><span class="wrn">!</span><span class="ext">+</span><span class="inf">i</span></div>
+      <span id="editor-lines">0000</span>
+    </div>
+    <div id="editor-area" contenteditable="true">error<br>warn<br>extension<br>info</div>
   </main>
 </div>
 <div id="vm-view">
