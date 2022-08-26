@@ -44,4 +44,4 @@ class Diagnostics {
   }
 }
 
-export { Diagnostics };
+export { Diagnostics, DiagnosticSeverity };

@@ -2,13 +2,14 @@ import "./static/index.sass"
 import "./static/index.html"
 
 import { Assemble } from "./assemble";
+import { editor_hints, editor_setup } from "./editor";
 
 window.addEventListener("DOMContentLoaded", () => {
   const settings_btn : HTMLInputElement = document.querySelector("#settings-btn");
   const build_btn : HTMLInputElement = document.querySelector("#build-btn");
 
   const settings_pane = document.querySelector("#settings-pane");
-  const editor_pane = document.querySelector("#editor-pane");
+  const editor_area = document.querySelector("#editor-area") as HTMLElement;
 
   settings_btn.onclick = () => {
     if(settings_pane.classList.contains("settings-hidden")) {
@@ -22,8 +23,10 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   build_btn.onclick = () => {
-    const code = editor_pane.querySelector("main").innerText;
+    const code = editor_area.innerText;
     const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
-    console.log(asm.result.executable);
+    editor_hints(asm.diagnostics);
   };
+
+  editor_setup();
 });

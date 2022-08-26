@@ -83,7 +83,7 @@ class Compile {
     }
 
     if(!this.first_end) {
-      this.diagnostics.extension(this.first_end, "Omitted end instruction is an extension.", this.settings.past_end);
+      this.diagnostics.extension(last_instruction?.line ?? 1, "Omitted end instruction is an extension.", this.settings.past_end);
     }
   }
 }
