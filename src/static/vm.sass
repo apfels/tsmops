@@ -3,12 +3,14 @@
   grid-template-areas: "mem con" "mem exe" "mem io"
   margin: 3rem
   gap: 3rem
+  max-height: calc(100vh - 6rem)
 
 #vm-view .pane
   border: $default-border
 
 #memory-pane
   grid-area: mem
+  min-width: max-content
 
 #control-pane
   grid-area: con
@@ -18,3 +20,32 @@
 
 #io-pane
   grid-area: io
+
+#memory-pane main
+  display: grid
+  grid-auto-flow: column
+  gap: 0 0.5rem
+  grid-template-columns: repeat(4, 1fr)
+  align-items: center
+  height: 100%
+  min-width: max-content
+  overflow: auto
+
+.memory-value
+  min-width: max-content
+  text-align: center
+  color: $border-color
+
+.memory-value input
+  font: inherit
+  background: transparent
+  color: $border-color
+  border: $default-border
+  margin: 0 0.2rem
+  padding: 0 0.1rem
+  width: 3rem
+  text-align: right
+  &:focus-visible
+    outline: none
+  &.assigned
+    color: $fg-color
