@@ -1,16 +1,21 @@
 import { Diagnostics, DiagnosticSeverity } from "./diagnostics";
 
 function editor_setup() {
-  const editor_area = document.querySelector("#editor-area");
+  const editor_area = document.querySelector("#editor-area") as HTMLElement;
   const editor_lines = document.querySelector("#editor-lines");
   const editor_hints = document.querySelector("#editor-hints");
 
   const update_lines = () => {
     editor_hints.textContent = "";
     editor_lines.textContent = "";
+
+    editor_area.style.height = "0px";
+    
     const line_height = parseFloat(window.getComputedStyle(editor_area).lineHeight);
     const full_height = editor_area.scrollHeight;
     const lines = Math.floor(full_height / line_height);
+
+    editor_area.style.height = "calc(" + String(full_height) + "px - 1rem)";
 
     editor_lines.textContent = (() => {
       let result = "";

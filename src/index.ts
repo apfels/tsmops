@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const build_btn : HTMLInputElement = document.querySelector("#build-btn");
 
   const settings_pane = document.querySelector("#settings-pane");
-  const editor_area = document.querySelector("#editor-area") as HTMLElement;
+  const editor_area = document.querySelector("#editor-area") as HTMLTextAreaElement;
 
   settings_btn.onclick = () => {
     if(settings_pane.classList.contains("settings-hidden")) {
@@ -23,7 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   build_btn.onclick = () => {
-    const code = editor_area.innerText;
+    const code = editor_area.value;
     const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
     editor_hints(asm.diagnostics);
   };

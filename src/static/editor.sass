@@ -7,18 +7,21 @@
   display: grid
   height: max-content
   grid-template-columns: 5rem auto
+  overflow-x: hidden
 
 #editor-gutter
-  height: max-content
   padding: 0.5rem 2.5rem 0.5rem 0.5rem
-  min-height: 1rem
+  height: max-content
   text-align: right
   border-right: $default-border
 
 #editor-area
-  min-height: 1rem
-  padding: 0.5rem
-  white-space: nowrap
+  all: unset
+  position: relative
+  padding: 0.5rem !important
+  margin: 0 !important
+  max-height: unset
+  white-space: pre
 
 #editor-area:focus-visible
   outline: none
