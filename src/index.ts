@@ -27,7 +27,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  build_btn.onclick = () => {
+  const rebuild = () => {
     const code = editor_area.value;
     const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
     editor_hints(asm.diagnostics);
@@ -35,7 +35,15 @@ window.addEventListener("DOMContentLoaded", () => {
       memory_gui.initialize(72);
       memory_gui.assign(asm.result.executable);
     }
+    else {
+      memory_gui.initialize(72);
+    }
   };
+
+  build_btn.onclick = rebuild;
+  document.addEventListener("keypress", (e) => {
+    if(e.key == "Enter" && e.ctrlKey) { rebuild(); }
+  });
 
   editor_setup();
 });

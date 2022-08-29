@@ -31,6 +31,22 @@ $settings-width: 20rem
   padding: 0
   grid-template-columns: repeat(2, auto)
 
+#settings-pane table
+  list-style-type: none
+  text-indent: 0
+  padding: 0
+  margin: 0 auto
+  width: 100%
+  table-layout: fixed
+  border-spacing: 0.5rem 0
+
+/* table with two columns */
+#settings-pane td:first-child:nth-last-child(2)
+  text-align: right
+  text-decoration: underline $border-color
+  ~ td
+    text-align: left
+
 #git-link
   width: 100%
   text-align: center
