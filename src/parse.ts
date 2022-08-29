@@ -193,9 +193,12 @@ class Parse {
     let idx = toks.findIndex(x => x.token_type == TokenType.label_def);
     idx = idx<0? toks.length : idx;
 
-    const instruction = toks.slice(0, idx);
+    const instruction = toks.slice(0, idx).filter(x => x.token_type != TokenType.white);
     const labels = toks.slice(idx);
 
+    if(instruction.length > 0 && toks[0].token_type == TokenType.white) {
+      this.diagnostics.extension(this.current_line, "Whitespace before mnemonics is an extension.", false);
+    }
     if(instruction.length == 0 && labels.length > 0) {
       this.diagnostics.extension(this.current_line, "Labels on empty lines are an extension.", this.settings.empty_line_jumps);
     }

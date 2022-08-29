@@ -69,7 +69,7 @@ class Compile {
     }
 
     for(const lbl of this.parse_tree.labels) {
-      if(lbl[1] > last_instruction.line) {
+      if(last_instruction == null || lbl[1] > last_instruction.line) {
         this.diagnostics.error(lbl[1], "Label does not belong to any instruction.");
       }
     }
