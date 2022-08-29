@@ -2,17 +2,17 @@ import "./static/index.sass"
 import "./static/index.html"
 
 import { Assemble } from "./assemble";
-import { editor_hints, editor_setup } from "./editor";
+import { EditorGui } from "./editor";
 import {MemoryGui} from "./memory"
 
 window.addEventListener("DOMContentLoaded", () => {
   const settings_btn : HTMLInputElement = document.querySelector("#settings-btn");
   const build_btn : HTMLInputElement = document.querySelector("#build-btn");
-
-  const settings_pane = document.querySelector("#settings-pane");
-  const editor_area = document.querySelector("#editor-area") as HTMLTextAreaElement;
-
+  const settings_pane = document.querySelector("#settings-pane") as HTMLElement;
+  const editor_container = document.querySelector("#editor-pane").querySelector("main") as HTMLTextAreaElement;
   const memory_container = document.querySelector("#memory-pane").querySelector("main");
+
+  const editor_gui = new EditorGui(editor_container);
   const memory_gui = new MemoryGui(memory_container);
   memory_gui.initialize(72);
 
@@ -28,9 +28,9 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   const rebuild = () => {
-    const code = editor_area.value;
+    const code = editor_gui.value();
     const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
-    editor_hints(asm.diagnostics);
+    editor_gui.update_hints(asm.diagnostics);
     if(!asm.diagnostics.error_state) {
       memory_gui.initialize(72);
       memory_gui.assign(asm.result.executable);
@@ -45,5 +45,5 @@ window.addEventListener("DOMContentLoaded", () => {
     if(e.key == "Enter" && e.ctrlKey) { rebuild(); }
   });
 
-  editor_setup();
+  editor_gui.initialize();
 });

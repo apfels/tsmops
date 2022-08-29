@@ -15,7 +15,7 @@
   text-align: right
   border-right: $default-border
 
-#editor-area
+#editor-pane textarea
   all: unset
   position: relative
   padding: 0.5rem !important
@@ -23,7 +23,7 @@
   max-height: unset
   white-space: pre
 
-#editor-area:focus-visible
+#editor-pane textarea:focus-visible
   outline: none
 
 #editor-pane > header
@@ -47,7 +47,7 @@
     transform: translateY(0.1rem)
     filter: brightness(0.5)
 
-#editor-hints
+#editor-pane .hints
   position: relative
   left: 2.9rem
   top: 0
@@ -55,7 +55,7 @@
   height: 0
   overflow: shown
 
-#editor-hints > span
+#editor-pane .hints > span
   position: absolute
   display: inline-block
   margin-top: 0.25rem
@@ -67,19 +67,19 @@
   line-height: 1rem
   user-select: none
 
-#editor-hints > .err
+.hints > .err
   color: #e44
   border: 1px solid #e44
 
-#editor-hints > .wrn
+.hints > .wrn
   color: #ee6
   border: 1px solid #ee6
 
-#editor-hints > .ext
+.hints > .ext
   color: #66b
   border: 1px solid #66b
 
-#editor-hints > .inf
+.hints > .inf
   color: #fff
   border: 1px solid #fff
 

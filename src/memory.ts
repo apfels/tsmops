@@ -12,7 +12,7 @@ class MemoryOutOfRange {
 }
 
 class MemoryGui {
-  container : HTMLElement
+  private container : HTMLElement
 
   constructor(container : HTMLElement) {
     this.container = container;
