@@ -14,11 +14,12 @@ class MemoryOutOfRange {
 class MemoryGui {
   private container : HTMLElement
 
-  constructor(container : HTMLElement) {
+  constructor(container : HTMLElement, size : number) {
     this.container = container;
+    this.reset(size);
   }
 
-  initialize(size : number) {
+  reset(size : number) {
     const row_count = Math.ceil(size / 4);
     this.container.style.gridTemplateRows = `repeat(${row_count}, 1fr)`
 

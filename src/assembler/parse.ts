@@ -1,7 +1,6 @@
 import { AsmArgument, AssemblerSettings, LineNumber, ParseTree, Token, TokenType } from "./assembler_types";
 import { Diagnostics } from "./diagnostics";
-import { ArgType, BuiltinAliases, CodedInstruction, Instruction, InstructionSet, Operation } from "../platform";
-import { MopsByte } from "../byte";
+import { ArgType, BuiltinAliases, CodedInstruction, Instruction, InstructionSet, MOPS_MAX_INTEGER, MOPS_MIN_INTEGER, Operation } from "../platform";
 
 class Parse {
   private readonly settings : AssemblerSettings;
@@ -23,10 +22,10 @@ class Parse {
 
   private check_range(word : string) {
     const val = parseInt(word);
-    if(val < MopsByte.min) {
+    if(val < MOPS_MIN_INTEGER) {
       this.diagnostics.error(this.current_line, "Number too low to represent.");
     }
-    else if(val > MopsByte.max) {
+    else if(val > MOPS_MAX_INTEGER) {
       this.diagnostics.error(this.current_line, "Number too high to represent.");
     }
     return val;

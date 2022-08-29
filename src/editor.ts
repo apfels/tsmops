@@ -8,37 +8,36 @@ class EditorGui {
   private lines : HTMLElement;
   private line_height : number;
 
-  constructor(container : HTMLElement) {
+  constructor(container : HTMLElement, onupdate : () => void) {
     this.text = container.querySelector("textarea");
     this.hints = container.querySelector(".hints");
     this.lines = container.querySelector(".lines");
     this.line_height = parseFloat(window.getComputedStyle(this.text).lineHeight);
+
+    this.update();
+    this.text.addEventListener("input", this.update);
+    this.text.addEventListener("input", onupdate);
   }
 
-  initialize() {
-    const update_lines = () => {
-      this.hints.textContent = "";
-      this.lines.textContent = "";
-  
-      this.text.style.height = "0px";
-      
-      
-      const full_height = this.text.scrollHeight;
-      const lines = Math.floor(full_height / this.line_height);
-  
-      this.text.style.height = "calc(" + String(full_height) + "px - 1rem)";
-  
-      this.lines.textContent = (() => {
-        let result = "";
-        for(const n of [...Array(lines).keys()]) {
-          result += String(n+1).padStart(4, '0') + '\n';
-        }
-        return result;
-      })();
-    };
-  
-    update_lines();
-    this.text.addEventListener("input", update_lines);
+  private update() {
+    this.hints.textContent = "";
+    this.lines.textContent = "";
+
+    this.text.style.height = "0px";
+    
+    
+    const full_height = this.text.scrollHeight;
+    const lines = Math.floor(full_height / this.line_height);
+
+    this.text.style.height = "calc(" + String(full_height) + "px - 1rem)";
+
+    this.lines.textContent = (() => {
+      let result = "";
+      for(const n of [...Array(lines).keys()]) {
+        result += String(n+1).padStart(4, '0') + '\n';
+      }
+      return result;
+    })();
   }
 
   value() : string {

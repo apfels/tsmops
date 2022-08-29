@@ -1,5 +1,5 @@
 import { ArgType, CodedInstruction, ExecutionComparison, ExecutionOperator, InstructionSet, Operation } from "../platform";
-import { MopsByte } from "../byte";
+import { MopsByte } from "./byte";
 import * as Event from "./event";
 
 class MopsMemory {

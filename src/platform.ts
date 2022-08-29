@@ -117,4 +117,7 @@ enum ExecutionComparison {
   gt,
 }
 
+export const MOPS_MIN_INTEGER = -9999;
+export const MOPS_MAX_INTEGER = 9999;
+
 export { Opcode, Operation, ArgType, Instruction, CodedInstruction, InstructionSet, BuiltinAliases, ExecutionOperator, ExecutionComparison };

@@ -1,5 +1,5 @@
 import { CodedInstruction, ExecutionComparison } from "../platform";
-import { MopsByte } from "../byte";
+import { MopsByte } from "./byte";
 
 export class Fetch {
   address : number;
