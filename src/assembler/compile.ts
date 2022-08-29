@@ -1,6 +1,6 @@
 import { AsmInstruction, AssemblerSettings, BuildResult, ParseTree } from "./assembler_types";
 import { Diagnostics } from "./diagnostics";
-import { InstructionSet, Operation } from "./platform";
+import { InstructionSet, Operation } from "../platform";
 
 class Compile {
   private readonly settings : AssemblerSettings;

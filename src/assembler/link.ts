@@ -1,6 +1,5 @@
-import { AsmArgument, AsmInstruction, AssemblerSettings, BuildResult, LineNumber, ParseTree, Token, TokenType } from "./assembler_types";
+import { AssemblerSettings, BuildResult, LineNumber } from "./assembler_types";
 import { Diagnostics } from "./diagnostics";
-import { ArgType, BuiltinAliases, CodedInstruction, Instruction, InstructionSet, Operation } from "./platform";
 
 class Link {
   private readonly settings : AssemblerSettings;

@@ -1,6 +1,6 @@
 import { AsmArgument, AssemblerSettings, LineNumber, ParseTree, Token, TokenType } from "./assembler_types";
 import { Diagnostics } from "./diagnostics";
-import { ArgType, BuiltinAliases, CodedInstruction, Instruction, InstructionSet, Operation } from "./platform";
+import { ArgType, BuiltinAliases, CodedInstruction, Instruction, InstructionSet, Operation } from "../platform";
 
 class Parse {
   private readonly settings : AssemblerSettings;

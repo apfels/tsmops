@@ -1,7 +1,7 @@
 import "./static/index.sass"
 import "./static/index.html"
 
-import { Assemble } from "./assemble";
+import { Assemble } from "./assembler/assemble";
 import { EditorGui } from "./editor";
 import {MemoryGui} from "./memory"
 

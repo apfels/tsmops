@@ -1,4 +1,4 @@
-import { Instruction } from "./platform"
+import { Instruction } from "../platform"
 
 export enum TokenType {
   white,

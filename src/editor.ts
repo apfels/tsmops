@@ -1,4 +1,4 @@
-import { Diagnostics, DiagnosticSeverity } from "./diagnostics";
+import { Diagnostics, DiagnosticSeverity } from "./assembler/diagnostics";
 
 
 
