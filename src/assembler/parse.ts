@@ -1,6 +1,7 @@
 import { AsmArgument, AssemblerSettings, LineNumber, ParseTree, Token, TokenType } from "./assembler_types";
 import { Diagnostics } from "./diagnostics";
 import { ArgType, BuiltinAliases, CodedInstruction, Instruction, InstructionSet, Operation } from "../platform";
+import { MopsByte } from "../byte";
 
 class Parse {
   private readonly settings : AssemblerSettings;
@@ -20,12 +21,24 @@ class Parse {
     this.parse(code);
   }
 
+  private check_range(word : string) {
+    const val = parseInt(word);
+    if(val < MopsByte.min) {
+      this.diagnostics.error(this.current_line, "Number too low to represent.");
+    }
+    else if(val > MopsByte.max) {
+      this.diagnostics.error(this.current_line, "Number too high to represent.");
+    }
+    return val;
+  }
+
   private lex_integer(word : string) : Token | null {
     if(!/^[-+]?[0-9]+$/.test(word)) {
       this.diagnostics.error(this.current_line, "Integer is invalid.");
       return null;
     }
-    return {token_type: TokenType.integer, value: parseInt(word)};
+
+    return {token_type: TokenType.integer, value: this.check_range(word)};
   }
 
   private lex_address(word : string) : Token | null {
@@ -33,7 +46,7 @@ class Parse {
       this.diagnostics.error(this.current_line, "Address is invalid.");
       return null;
     }
-    return {token_type: TokenType.address, value: parseInt(word)};
+    return {token_type: TokenType.address, value: this.check_range(word)};
   }
 
   private lex_line_num(word : string) : Token | null {
@@ -41,7 +54,7 @@ class Parse {
       this.diagnostics.error(this.current_line, "Line reference is invalid.");
       return null;
     }
-    return {token_type: TokenType.line_num, value: parseInt(word)};
+    return {token_type: TokenType.line_num, value: this.check_range(word)};
   }
 
   private lex_label_def(word : string) : Token | null {

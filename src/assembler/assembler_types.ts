@@ -54,8 +54,6 @@ export class BuildResult {
 
 export class AssemblerSettings {
   replace_mnemonics : Map<string,string> = new Map();
-  integer_min : number = -9999;
-  integer_max : number = 9999;
   program_size : number = 64;
   memory_size : number = 72;
 

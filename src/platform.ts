@@ -100,4 +100,21 @@ const BuiltinAliases : Map<string,number> = new Map([
   ["h", 71],
 ]);
 
-export { Opcode, Operation, ArgType, Instruction, CodedInstruction, InstructionSet, BuiltinAliases };
+enum ExecutionOperator {
+  none = 0,
+  add,
+  sub,
+  mul,
+  div,
+  mod,
+  cmp,
+}
+
+enum ExecutionComparison {
+  none = 0,
+  lt,
+  eq,
+  gt,
+}
+
+export { Opcode, Operation, ArgType, Instruction, CodedInstruction, InstructionSet, BuiltinAliases, ExecutionOperator, ExecutionComparison };

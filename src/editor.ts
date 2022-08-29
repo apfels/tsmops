@@ -53,7 +53,6 @@ class EditorGui {
     for(const dia of diagnostics.messages) {
       if(!filled_lines.has(dia.near_line)) {
         filled_lines.add(dia.near_line);
-        console.log(filled_lines);
         const entry = document.createElement("span");
         entry.title = dia.description;
         entry.textContent = (() => {

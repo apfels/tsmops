@@ -4,6 +4,23 @@ import "./static/index.html"
 import { Assemble } from "./assembler/assemble";
 import { EditorGui } from "./editor";
 import {MemoryGui} from "./memory"
+import { MopsMachine } from "./vm/vm";
+
+function format_object(o : any) {
+  let str = "";
+  if(o instanceof Object) {
+    str += o.constructor.name != "Object" ? (o.constructor.name + " {") : "{";
+    let ps = [];
+    for(const [k,v] of Object.entries(o)) {
+      ps.push(k + ":" + format_object(v));
+    }
+    str += ps.join(", ") + "}";
+  }
+  else {
+    str += String(o);
+  }
+  return str;
+}
 
 window.addEventListener("DOMContentLoaded", () => {
   const settings_btn : HTMLInputElement = document.querySelector("#settings-btn");
@@ -27,6 +44,29 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const run_vm = (exe : number[], size : number) => {
+    const memory = exe.concat(Array(size-exe.length).fill(0));
+    const vm = new MopsMachine(memory, {
+      event(ev) {
+        console.log(format_object(ev));
+        
+      },
+      input() {
+        const value = parseInt(prompt("input", "0"));
+        console.log("input", value);
+        return value;
+      },
+      output(value) {
+        alert("output: " + value);
+        console.log("output", value);
+      },
+      halt() {
+        console.log("halt");
+      },
+    });
+    vm.run();
+  }
+
   const rebuild = () => {
     const code = editor_gui.value();
     const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
@@ -34,6 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if(!asm.diagnostics.error_state) {
       memory_gui.initialize(72);
       memory_gui.assign(asm.result.executable);
+      run_vm(asm.result.executable, 72);
     }
     else {
       memory_gui.initialize(72);
