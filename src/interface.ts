@@ -97,13 +97,10 @@ class MachineUi {
     }
   };
 
-  run_vm() {
+  async run_vm() {
     if(this.current_executable == null) { return; }
     const memory = this.current_executable.concat(Array(MachineUi.memory_size-this.current_executable.length).fill(0));
     const vm = new MopsMachine(memory, {
-      event(ev) {
-        console.log(format_object(ev));
-      },
       input() {
         const value = parseInt(prompt("input", "0"));
         console.log("input", value);
@@ -112,12 +109,12 @@ class MachineUi {
       output(value) {
         alert("output: " + value);
         console.log("output", value);
-      },
-      halt() {
-        console.log("halt");
-      },
+      }
     });
-    vm.run();
+    for(const ev of vm.run()) {
+      console.log(format_object(ev));
+      await new Promise(r => setTimeout(r, 500));
+    }
   }
 
   toggle_settings() {

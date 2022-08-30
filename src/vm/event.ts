@@ -68,4 +68,14 @@ export class Decode {
   }
 }
 
-export type Event = Fetch | MemoryRead | MemoryWrite | RegisterRead | RegisterWrite | Decode;
+export class FailState {
+  message : string;
+
+  constructor(from : Required<FailState>) {
+    Object.assign(this, from);
+  }
+}
+
+export class Halt {}
+
+export type Event = Fetch | MemoryRead | MemoryWrite | RegisterRead | RegisterWrite | Decode | FailState | Halt;

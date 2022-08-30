@@ -23,8 +23,6 @@ class MopsExecution {
 }
 
 interface CallbackHandler {
-  event : (ev : Event.Event) => void;
-  halt : () => void;
   input : () => number;
   output : (value : number) => void;
 }
@@ -42,8 +40,6 @@ class MopsMachine {
     this.callbacks = callbacks;
   }
 
-  private fire(ev : Event.Event) { this.callbacks.event(ev); }
-
   private assign_memory(values : number[], start : number = 0) {
     for(const [i, v] of values.entries()) {
       if(i+start < 0 || i+start > this.memory.values.length) { throw "Invalid Address!"; }
@@ -56,52 +52,52 @@ class MopsMachine {
     return this.memory.values[i].value;
   }
 
-  private fetch() {
+  private *fetch() {
     const addr = this.control.ip;
     const lo = this.memory.values[addr.value];
     const hi = this.memory.values[addr.value+1] ?? new MopsByte(0);
-    this.fire(new Event.Fetch({
+    yield new Event.Fetch({
       address:addr.value,
       lo:lo.value,
       hi:hi.value
-    }));
+    });
 
     this.control.ir_lo = lo;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"ir_lo",
       value:lo.value
-    }));
+    });
 
     this.control.ir_hi = hi;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"ir_hi",
       value:hi.value
-    }));
+    });
   }
 
-  private decode() {
+  private *decode() {
     const instr = InstructionSet.find(x => x.opcode == this.control.ir_lo.value);
     this.control.decode = instr;
-    this.fire(new Event.Decode({
+    yield new Event.Decode({
       instruction:instr,
       argument:this.control.ir_hi.value
-    }));
+    });
 
     this.control.ip = new MopsByte( this.control.ip.value + ((instr.instruction.arg_type==ArgType.none) ? 1 : 2) );
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"ip",
       value:this.control.ip.value
-    }));
+    });
   }
 
-  private fetch_operand() {
+  private *fetch_operand() {
     if(this.control.decode.instruction.arg_type == ArgType.adr_src) {
       const addr = this.control.ir_hi;
       const val = this.memory.values[addr.value];
-      this.fire(new Event.MemoryRead({
+      yield new Event.MemoryRead({
         address:addr.value,
         value:val.value
-      }));
+      });
 
       this.control.arg_cache = val;
     }
@@ -110,63 +106,63 @@ class MopsMachine {
     }
   }
 
-  private exec_ld(val : MopsByte) {
+  private *exec_ld(val : MopsByte) {
     this.execution.acc = val;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"acc",
       value:val.value
-    }));
+    });
   }
 
-  private exec_st(adr : MopsByte) {
+  private *exec_st(adr : MopsByte) {
     const val = this.execution.acc;
-    this.fire(new Event.RegisterRead({
+    yield new Event.RegisterRead({
       target:"acc",
       value:this.execution.acc.value
-    }));
+    });
 
     this.memory.values[adr.value] = val;
-    this.fire(new Event.MemoryWrite({
+    yield new Event.MemoryWrite({
       address:adr.value,
       value:val.value
-    }));
+    });
   }
 
-  private exec_in(adr : MopsByte) {
+  private *exec_in(adr : MopsByte) {
     const val = this.callbacks.input();
-    this.fire(new Event.RegisterRead({
+    yield new Event.RegisterRead({
       target:"in",
       value:val
-    }));
+    });
 
     this.memory.values[adr.value] = new MopsByte(val);
-    this.fire(new Event.MemoryWrite({
+    yield new Event.MemoryWrite({
       address:adr.value,
       value:val
-    }));
+    });
   }
 
-  private exec_out(val : MopsByte) {
+  private *exec_out(val : MopsByte) {
     this.callbacks.output(val.value);
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"out",
       value:val.value
-    }));
+    });
   }
 
-  private exec_math(operator : ExecutionOperator, operand : MopsByte) {
+  private *exec_math(operator : ExecutionOperator, operand : MopsByte) {
     const opr = new MopsByte(operator);
     this.execution.opr = opr;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"opr",
       value:operator
-    }));
+    });
 
     this.execution.opd = operand;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"opd",
       value:operand.value
-    }));
+    });
 
     const result = new MopsByte((() => {
       switch(operator) {
@@ -178,24 +174,24 @@ class MopsMachine {
       }
     })());
     this.execution.acc = result;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"res",
       value:result.value
-    }));
+    });
   }
 
-  private exec_cmp(operand : MopsByte) {
+  private *exec_cmp(operand : MopsByte) {
     this.execution.opr = new MopsByte(ExecutionOperator.cmp);
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"opr",
       value:ExecutionOperator.cmp
-    }));
+    });
 
     this.execution.opd = operand;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"opd",
       value:operand.value
-    }));
+    });
 
     const cmp = new MopsByte((() => {
       if(this.execution.acc < this.execution.opd) { return ExecutionComparison.lt; }
@@ -205,33 +201,33 @@ class MopsMachine {
     })());
 
     this.execution.cmp = cmp;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"cmp",
       value:cmp.value
-    }));
+    });
   }
 
-  private exec_jmp(tar : MopsByte) {
+  private *exec_jmp(tar : MopsByte) {
     this.control.ip = tar;
-    this.fire(new Event.RegisterWrite({
+    yield new Event.RegisterWrite({
       target:"ip",
       value:tar.value
-    }));
+    });
   }
 
-  private exec_branch(condition : ExecutionComparison, tar : MopsByte) {
+  private *exec_branch(condition : ExecutionComparison, tar : MopsByte) {
     const cmp = this.execution.cmp.value;
-    this.fire(new Event.RegisterRead({
+    yield new Event.RegisterRead({
       target:"cmp",
       value:cmp
-    }));
+    });
 
     if(cmp == condition) {
       this.exec_jmp(tar);
     }
   }
 
-  private execute() {
+  private *execute() {
     const arg = this.control.arg_cache;
     const op = this.control.decode.instruction.operation;
 
@@ -239,66 +235,70 @@ class MopsMachine {
       case Operation.nop:
         break;
       case Operation.ld:
-        this.exec_ld(arg);
+        yield* this.exec_ld(arg);
         break;
       case Operation.st:
-        this.exec_st(arg);
+        yield* this.exec_st(arg);
         break;
       case Operation.in:
-        this.exec_in(arg);
+        yield* this.exec_in(arg);
         break;
       case Operation.out:
-        this.exec_out(arg);
+        yield* this.exec_out(arg);
         break;
       case Operation.add:
-        this.exec_math(ExecutionOperator.add, arg);
+        yield* this.exec_math(ExecutionOperator.add, arg);
         break;
       case Operation.sub:
-        this.exec_math(ExecutionOperator.sub, arg);
+        yield* this.exec_math(ExecutionOperator.sub, arg);
         break;
       case Operation.mul:
-        this.exec_math(ExecutionOperator.mul, arg);
+        yield* this.exec_math(ExecutionOperator.mul, arg);
         break;
       case Operation.div:
-        this.exec_math(ExecutionOperator.div, arg);
+        yield* this.exec_math(ExecutionOperator.div, arg);
         break;
       case Operation.mod:
-        this.exec_math(ExecutionOperator.mod, arg);
+        yield* this.exec_math(ExecutionOperator.mod, arg);
         break;
       case Operation.cmp:
-        this.exec_cmp(arg);
+        yield* this.exec_cmp(arg);
         break;
       case Operation.jmp:
-        this.exec_jmp(arg);
+        yield* this.exec_jmp(arg);
         break;
       case Operation.jlt:
-        this.exec_branch(ExecutionComparison.lt, arg);
+        yield* this.exec_branch(ExecutionComparison.lt, arg);
         break;
       case Operation.jeq:
-        this.exec_branch(ExecutionComparison.eq, arg);
+        yield* this.exec_branch(ExecutionComparison.eq, arg);
         break;
       case Operation.jgt:
-        this.exec_branch(ExecutionComparison.gt, arg);
+        yield* this.exec_branch(ExecutionComparison.gt, arg);
         break;
       case Operation.end:
         this.halted = true;
-        this.callbacks.halt();
         break;
     }
   }
 
-  private cycle() {
-    this.fetch();
-    this.decode();
-    this.fetch_operand();
-    this.execute();
+  private *cycle() {
+    yield* this.fetch();
+    yield* this.decode();
+    yield* this.fetch_operand();
+    yield* this.execute();
   }
 
-  run() {
-    this.halted = false;
-    while(!this.halted) {
-      this.cycle();
+  *run() {
+    try {
+      this.halted = false;
+      while(!this.halted) {
+        yield* this.cycle();
+      }
+    } catch {
+      yield new Event.FailState({message:"Runtime Error!"});
     }
+    yield new Event.Halt();
   }
 }
 
