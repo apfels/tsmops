@@ -1,4 +1,5 @@
 import { Assemble } from "./assembler/assemble";
+import { Link } from "./assembler/link";
 import { EditorGui } from "./editor";
 import { MemoryGui } from "./memory";
 import { MopsMachine } from "./vm/vm";
@@ -32,7 +33,9 @@ class MachineUi {
   private readonly editor_container = document.querySelector("#editor-pane").querySelector("main") as HTMLTextAreaElement;
   private readonly memory_container = document.querySelector("#memory-pane").querySelector("main");
 
-  private readonly editor_gui : EditorGui = new EditorGui(this.editor_container, this.clear_build);
+  private readonly check_extended_syntax = document.querySelector("#check-extended-syntax") as HTMLInputElement;
+
+  private readonly editor_gui : EditorGui = new EditorGui(this.editor_container, () => { this.clear_build(); });
   private readonly memory_gui : MemoryGui = new MemoryGui(this.memory_container, MachineUi.memory_size);
 
   private current_executable : number[];
@@ -43,22 +46,45 @@ class MachineUi {
     this.settings_btn.onclick = () => { this.toggle_settings(); };
     this.build_btn.onclick = () => { this.rebuild(); };
     this.run_btn.onclick = () => { this.run_vm(); };
+    this.save_btn.onclick = () => { this.download_code(); }
 
-    document.addEventListener("keypress", (e) => {
-      if(e.ctrlKey && e.key == "q") { this.toggle_settings(); }
-      if(e.ctrlKey && e.key == "Enter") { this.rebuild(); }
-      if(e.ctrlKey && e.key == " ") { this.rebuild(); }
+    window.addEventListener("keydown", (e) => {
+      if(e.ctrlKey && e.key == "e") { e.preventDefault(); this.toggle_settings(); }
+      if(e.ctrlKey && e.key == "Enter") { e.preventDefault(); this.rebuild(); }
+      if(e.ctrlKey && e.key == " ") { e.preventDefault(); this.run_vm(); }
+      if(e.ctrlKey && e.key == "s") { e.preventDefault(); this.download_code(); }
     });
+  }
+
+  download_code() {
+    const anchor = document.createElement("a");
+    const now = new Date();
+    anchor.download =
+      `tsmops_${now.getUTCFullYear().toString().padStart(4,'0')}` +
+      `_${now.getUTCMonth().toString().padStart(2,'0')}` +
+      `_${now.getUTCDate().toString().padStart(2,'0')}` +
+      `_${now.getUTCHours().toString().padStart(2,'0')}` +
+      `_${now.getUTCMinutes().toString().padStart(2,'0')}.asm`;
+    anchor.href = `data:text/plain,${encodeURIComponent(this.editor_gui.value())}`;
+    anchor.click();
   }
 
   clear_build() {
     this.run_btn.disabled = true;
     this.current_executable = undefined;
+    this.memory_gui.reset(MachineUi.memory_size);
   }
 
   rebuild() {
+    const ext_syntax : boolean = this.check_extended_syntax.checked;
     const code = this.editor_gui.value();
-    const asm = new Assemble({ replace_mnemonics: new Map([["div","dd"]]) }, code);
+    const asm = new Assemble({
+      nop:              ext_syntax,
+      empty_line_jumps: ext_syntax,
+      jump_address:     ext_syntax,
+      multiple_labels:  ext_syntax,
+      past_end:         ext_syntax,
+    }, code);
     this.editor_gui.update_hints(asm.diagnostics);
     if(!asm.diagnostics.error_state) {
       this.memory_gui.reset(MachineUi.memory_size);
@@ -67,16 +93,16 @@ class MachineUi {
       this.run_btn.disabled = false;
     }
     else {
-      this.memory_gui.reset(MachineUi.memory_size);
+      this.clear_build();
     }
   };
 
   run_vm() {
+    if(this.current_executable == null) { return; }
     const memory = this.current_executable.concat(Array(MachineUi.memory_size-this.current_executable.length).fill(0));
     const vm = new MopsMachine(memory, {
       event(ev) {
         console.log(format_object(ev));
-        
       },
       input() {
         const value = parseInt(prompt("input", "0"));

@@ -18,7 +18,7 @@ class Link {
   private link() {
     for(const e of this.build.link_table.entries()) {
       const target = (this.settings.empty_line_jumps)
-        ?  [...this.build.line_offsets.keys()].find(x => x && x >= e[1].to)
+        ?  [...this.build.line_offsets].find(x => x && x[0] >= e[1].to)[1]
         : this.build.line_offsets.get(e[1].to);
       if(target == null) {
         this.diagnostics.error(e[1].from, "Jump does not target any instruction.");

@@ -1,7 +1,7 @@
 enum DiagnosticSeverity {
   info,
   warning,
-  extension,
+  disabled_ext,
   error,
 }
 
@@ -28,7 +28,7 @@ class Diagnostics {
   }
 
   extension(near_line : number, description : string, enabled : boolean) {
-    this.raise(DiagnosticSeverity.extension, near_line, description);
+    this.raise(enabled ? DiagnosticSeverity.warning : DiagnosticSeverity.disabled_ext, near_line, description);
     if(!enabled) { this.error_state = true; }
   }
 

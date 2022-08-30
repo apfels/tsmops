@@ -15,8 +15,8 @@ class EditorGui {
     this.line_height = parseFloat(window.getComputedStyle(this.text).lineHeight);
 
     this.update();
-    this.text.addEventListener("input", this.update);
-    this.text.addEventListener("input", onupdate);
+    this.text.addEventListener("input", () => { this.update(); });
+    this.text.addEventListener("input", () => { onupdate(); });
   }
 
   private update() {
@@ -57,8 +57,8 @@ class EditorGui {
         entry.textContent = (() => {
           switch(dia.severity) {
             case DiagnosticSeverity.error: return '!';
-            case DiagnosticSeverity.extension: return '+';
-            case DiagnosticSeverity.warning: return '!';
+            case DiagnosticSeverity.disabled_ext: return '+';
+            case DiagnosticSeverity.warning: return 'i';
             case DiagnosticSeverity.info: return 'i';
             default: return "?";
           }
@@ -66,7 +66,7 @@ class EditorGui {
         entry.classList.add((() => {
           switch(dia.severity) {
             case DiagnosticSeverity.error: return 'err';
-            case DiagnosticSeverity.extension: return 'ext';
+            case DiagnosticSeverity.disabled_ext: return 'ext';
             case DiagnosticSeverity.warning: return 'wrn';
             case DiagnosticSeverity.info: return 'inf';
             default: return "inf";

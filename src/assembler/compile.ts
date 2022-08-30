@@ -17,9 +17,9 @@ class Compile {
     this.compile();
   }
 
-  private push_bytes(pi : AsmInstruction, arg? : number) {
-    if(this.diagnostics.error_state) { return; }
-    if(pi.line > this.first_end && !this.settings.past_end) { return; }
+  private push_bytes(pi : AsmInstruction, arg? : number) : boolean {
+    if(this.diagnostics.error_state) { return false; }
+    if(pi.line > this.first_end && !this.settings.past_end) { return false; }
   
     const opcode = InstructionSet.find(x => x.instruction == pi.instruction).opcode;
 
@@ -29,6 +29,7 @@ class Compile {
     }
 
     this.build.line_offsets.set(pi.line, this.build.executable.length - ((arg!=null) ? 2 : 1));
+    return true;
   }
 
   private compile_instruction(pi : AsmInstruction) {
@@ -36,16 +37,18 @@ class Compile {
       this.push_bytes(pi);
     }
     else if("identifier" in pi.argument) {
-      this.push_bytes(pi, this.parse_tree.labels.get(pi.argument.identifier));
-      this.build.link_table.set(
+      const pushed = this.push_bytes(pi, this.parse_tree.labels.get(pi.argument.identifier));
+      if(pushed) { this.build.link_table.set(
         this.build.executable.length-1,
         {from: pi.line, to: this.parse_tree.labels.get(pi.argument.identifier)});
+      }
     }
     else if("line_number" in pi.argument) {
-      this.push_bytes(pi, 0);
-      this.build.link_table.set(
+      const pushed = this.push_bytes(pi, 0);
+      if(pushed) { this.build.link_table.set(
         this.build.executable.length-1,
         {from: pi.line, to: pi.argument.line_number});
+      }
     }
     else if("address" in pi.argument) {
       this.push_bytes(pi, pi.argument.address);
@@ -59,6 +62,7 @@ class Compile {
   }
 
   private compile() {
+    console.log(this.parse_tree);
     const size_lower_bound = this.parse_tree.instruction_lines.size / 2;
     const last_instruction = [...this.parse_tree.instruction_lines.values()].pop();
     const end = this.parse_tree.instruction_lines.get(this.first_end);
