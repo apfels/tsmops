@@ -100,6 +100,15 @@ function nice_comparison_string(cmp : number) {
   }
 }
 
+function limit_textarea(element : HTMLTextAreaElement) {
+  const lines = element.value.split("\n");
+  element.value =
+    lines
+    .map(x => (x.match(/[+-]?[0-9]{0,4}/)??[])[0])
+    .filter((x,i) => { return x != "" || i == lines.length-1 })
+    .join("\n");
+}
+
 const fetch_anim = [
   {backgroundColor: "#6f6"},
   {backgroundColor: "#6f6"},
@@ -144,6 +153,8 @@ class MachineGui {
     this.close_settings();
     this.dom.button.run.disabled = true;
     this.dom.button.end.disabled = true;
+
+    this.dom.queue_area.oninput = () => { limit_textarea(this.dom.queue_area) };
 
     this.initialize_buttons();
   }
@@ -354,8 +365,15 @@ class MachineGui {
     const machine = new MopsMachine(padded_memory, {
       input : () => {
         const lines = this.dom.queue_area.value.split("\n");
-        // '|| 0' for NaN -> 0 (?? doesn't work because NaN isn't nullish)
-        const value = ( lines[0] ? parseInt(lines[0]) : parseInt(prompt("No input waiting. Next: ", "0")) ) || 0;
+        const user_value = lines[0] ?
+          lines[0] :
+          prompt("Nothing queued. Next input: ", "0");
+        if(Object.is(NaN, parseInt(user_value))) {
+          alert("Not valid: " + user_value + ". Using 0.");
+        }
+
+        const value = parseInt(user_value) || 0;
+
         this.dom.queue_area.value = lines.splice(1).join("\n");
         this.dom.queue_area.animate(read_anim, anim_settings);
         this.dom.reg.in.value = MopsByte.format(value);
