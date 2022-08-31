@@ -162,6 +162,7 @@ class MachineGui {
         if(ev.key == " ")         { ev.preventDefault(); this.dom.button.run.click(); }
         if(ev.key == "Backspace") { ev.preventDefault(); this.dom.button.end.click(); }
         if(ev.key == "s")         { ev.preventDefault(); this.dom.button.save.click(); }
+        if(ev.key == ".")         { ev.preventDefault(); this.state.current_run?.next(); }
       }
     });
   }
