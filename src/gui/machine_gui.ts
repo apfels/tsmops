@@ -186,9 +186,13 @@ class MachineGui {
     this.dom.button.build.disabled = true;
     this.dom.button.end.disabled = false;
     if(this.state.running) {
+      this.dom.button.run.classList.add("run");
+      this.dom.button.run.classList.remove("pause");
       this.state.running = false;
     }
     else {
+      this.dom.button.run.classList.add("pause");
+      this.dom.button.run.classList.remove("run");
       if(!this.state.current_run) {
         this.memory_gui.reset(MachineGui.memory_size);
         this.clear_regs();
@@ -201,6 +205,9 @@ class MachineGui {
 
   end_action() {
     this.dom.button.end.disabled = true;
+    this.dom.button.build.disabled = false;
+    this.dom.button.run.classList.add("run");
+    this.dom.button.run.classList.remove("pause");
     this.state.running = false;
     this.state.current_run = undefined;
     this.enable_editor();
@@ -358,7 +365,7 @@ class MachineGui {
         }
         else {
           if(ev.target == "res") {
-            this.dom.reg.acc.value = ev.value.toString();
+            this.dom.reg.acc.value = MopsByte.format(ev.value);
             this.dom.reg.acc.animate(write_anim, anim_settings);
           }
           reg_element.value = MopsByte.format(ev.value);

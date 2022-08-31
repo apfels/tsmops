@@ -41,10 +41,12 @@
   margin: 0.5rem 0.25rem
   position: relative
   top: 0
-  &:hover
+  &:enabled:hover
     transform: translateY(-0.1rem)
-  &:active
+  &:enabled:active
     transform: translateY(0.1rem)
+    filter: brightness(0.5)
+  &:disabled
     filter: brightness(0.5)
 
 #editor-pane .hints
@@ -89,3 +91,15 @@
 
 #build-btn
   background: url("image/build.svg") center/100%
+
+#run-btn.run
+  background: url("image/run.svg") center/100%
+
+#run-btn.pause
+  background: url("image/pause.svg") center/100%
+
+#end-btn
+  background: url("image/end.svg") center/100%
+
+#save-btn
+  background: url("image/save.svg") center/100%
