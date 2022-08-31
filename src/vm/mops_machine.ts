@@ -1,6 +1,6 @@
 import { ArgType, CodedInstruction, ExecutionComparison, ExecutionOperator, InstructionSet, Operation } from "../platform";
-import { MopsByte } from "./byte";
-import * as Event from "./event";
+import { MopsByte } from "./mops_byte";
+import * as Event from "./mops_event";
 
 class MopsMemory {
   values : MopsByte[] = [];

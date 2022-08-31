@@ -1,5 +1,5 @@
 import { CodedInstruction, ExecutionComparison } from "../platform";
-import { MopsByte } from "./byte";
+import { MopsByte } from "./mops_byte";
 
 export class Fetch {
   address : number;
@@ -78,4 +78,4 @@ export class FailState {
 
 export class Halt {}
 
-export type Event = Fetch | MemoryRead | MemoryWrite | RegisterRead | RegisterWrite | Decode | FailState | Halt;
+export type MopsEvent = Fetch | MemoryRead | MemoryWrite | RegisterRead | RegisterWrite | Decode | FailState | Halt;

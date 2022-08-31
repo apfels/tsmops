@@ -1,9 +1,8 @@
 import { Assemble } from "./assembler/assemble";
-import { Link } from "./assembler/link";
 import { EditorGui } from "./editor";
 import { MemoryGui } from "./memory";
-import { MopsMachine } from "./vm/vm";
-import * as Event from "./vm/event";
+import { MopsMachine } from "./vm/mops_machine";
+import * as Event from "./vm/mops_event";
 import { ArgType, ExecutionComparison, ExecutionOperator, Operation } from "./platform";
 
 function format_object(o : any) {
