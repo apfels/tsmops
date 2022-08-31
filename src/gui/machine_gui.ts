@@ -5,6 +5,7 @@ import { EditorGui } from "./editor_gui";
 import { MemoryGui } from "./memory_gui";
 import * as Event from "../vm/mops_event";
 import { ArgType, ExecutionComparison, ExecutionOperator, Operation } from "../platform";
+import { MopsByte } from "../vm/mops_byte";
 
 class MachineGuiElements {
   readonly vm_view = document.querySelector("#vm-view");
@@ -101,22 +102,26 @@ function nice_comparison_string(cmp : number) {
 
 const fetch_anim = [
   {backgroundColor: "#6f6"},
+  {backgroundColor: "#6f6"},
   {backgroundColor: "initial"},
 ];
 const read_anim = [
+  {backgroundColor: "#66f"},
   {backgroundColor: "#66f"},
   {backgroundColor: "initial"},
 ];
 const write_anim = [
   {backgroundColor: "#f66"},
+  {backgroundColor: "#f66"},
   {backgroundColor: "initial"},
 ];
 const halt_anim = [
   {filter: "opacity(0.5) brightness(0.5)"},
+  {filter: "opacity(0.5) brightness(0.5)"},
   {filter: "opacity(1) brightness(1)"},
 ];
 const anim_settings = {
-  duration: 500,
+  duration: 1500,
   fill: "none" as FillMode,
 };
 
@@ -266,8 +271,13 @@ class MachineGui {
   }
 
   clear_regs() {
-    for(const reg of Object.values(this.dom.reg)) {
-      reg.value = "";
+    for(const reg of Object.entries(this.dom.reg)) {
+      if(reg[0] == "opr" || reg[0] == "cmp" || reg[0] == "decode") {
+        reg[1].value = "";
+      }
+      else {
+        reg[1].value = "0000";
+      }
     }
     this.dom.history_area.value = "";
   }
@@ -303,7 +313,7 @@ class MachineGui {
         const value = ( lines[0] ? parseInt(lines[0]) : parseInt(prompt("No input waiting. Next: ", "0")) ) || 0;
         this.dom.queue_area.value = lines.splice(1).join("\n");
         this.dom.queue_area.animate(read_anim, anim_settings);
-        this.dom.reg.in.value = value.toString();
+        this.dom.reg.in.value = MopsByte.format(value);
         console.log("input", value);
         return value;
       },
@@ -311,7 +321,7 @@ class MachineGui {
         if(this.dom.history_area.value != "") {
           this.dom.history_area.value += "\n";
         }
-        this.dom.history_area.value += value.toString();
+        this.dom.history_area.value += MopsByte.format(value);
         this.dom.history_area.animate(write_anim, anim_settings);
         console.log("output", value);
       }
@@ -349,7 +359,7 @@ class MachineGui {
             this.dom.reg.acc.value = ev.value.toString();
             this.dom.reg.acc.animate(write_anim, anim_settings);
           }
-          reg_element.value = ev.value.toString();
+          reg_element.value = MopsByte.format(ev.value);
         }
       }
       else if(ev instanceof Event.Decode) {

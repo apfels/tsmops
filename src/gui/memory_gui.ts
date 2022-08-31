@@ -1,3 +1,5 @@
+import { MopsByte } from "../vm/mops_byte";
+
 function alias_at(now : number, first : number, last : number) : string {
   if(now < first || now > last) { return "&nbsp;"; }
 
@@ -28,7 +30,7 @@ class MemoryGui {
     for(let i=0; i<size; ++i) {
       const this_value = document.createElement("span");
       this_value.classList.add("memory-value");
-      this_value.innerHTML = `${String(i).padStart(4,'0')}<input id="memory-value-${i}" type="text" disabled value="0000">${alias_at(i, 64, 71)}`
+      this_value.innerHTML = `${MopsByte.format(i)}<input id="memory-value-${i}" type="text" disabled value="0000">${alias_at(i, 64, 71)}`
 
       this.container.appendChild(this_value);
     }
@@ -38,7 +40,7 @@ class MemoryGui {
     for(const [i, value] of values.entries()) {
       const value_input = document.querySelector(`#memory-value-${i+start}`) as HTMLInputElement;
       if(!value_input) { throw new MemoryOutOfRange(i+start); }
-      value_input.value = String(value).padStart(4, '0');
+      value_input.value = MopsByte.format(value);
       value_input.classList.add("assigned")
     }
   }
