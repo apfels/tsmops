@@ -1,9 +1,9 @@
-import { Assemble } from "./assembler/assemble";
+import { Assemble } from "../assembler/assemble";
 import { EditorGui } from "./editor";
 import { MemoryGui } from "./memory";
-import { MopsMachine } from "./vm/mops_machine";
-import * as Event from "./vm/mops_event";
-import { ArgType, ExecutionComparison, ExecutionOperator, Operation } from "./platform";
+import { MopsMachine } from "../vm/mops_machine";
+import * as Event from "../vm/mops_event";
+import { ArgType, ExecutionComparison, ExecutionOperator, Operation } from "../platform";
 
 function format_object(o : any) {
   let str = "";
