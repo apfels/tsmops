@@ -330,7 +330,11 @@ class MachineGui {
   }
 
   async *run_machine() {
-    const machine = new MopsMachine(this.state.current_build.executable, {
+    const padded_memory = this.state.current_build.executable.concat(
+      Array(MachineGui.memory_size - this.state.current_build.executable.length)
+      .fill(0));
+
+    const machine = new MopsMachine(padded_memory, {
       input : () => {
         const lines = this.dom.queue_area.value.split("\n");
         // '|| 0' for NaN -> 0 (?? doesn't work because NaN isn't nullish)

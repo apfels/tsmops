@@ -1,6 +1,12 @@
 import { ArgType, CodedInstruction, ExecutionComparison, ExecutionOperator, InstructionSet, Operation } from "../platform";
-import { MopsByte } from "./mops_byte";
+import { MopsByte, MopsByteError } from "./mops_byte";
 import * as Event from "./mops_event";
+
+class MopsMemoryError extends Error {
+  constructor(arg : string) {
+    super(arg);
+  }
+}
 
 class MopsMemory {
   values : MopsByte[] = [];
@@ -54,6 +60,13 @@ class MopsMachine {
 
   private *fetch() {
     const addr = this.control.ip;
+
+    console.log("address fetch:", addr.value);
+    if(addr.value >= this.memory.values.length) {
+      console.log("Out of range detected:", addr.value);
+      throw new MopsMemoryError("Address out of range!");
+    }
+
     const lo = this.memory.values[addr.value];
     const hi = this.memory.values[addr.value+1] ?? new MopsByte(0);
     yield new Event.Fetch({
@@ -163,6 +176,10 @@ class MopsMachine {
       target:"opd",
       value:operand.value
     });
+
+    if(operator == ExecutionOperator.div && operand.value == 0) {
+      throw new MopsByteError("Division by zero!");
+    }
 
     const result = new MopsByte((() => {
       switch(operator) {
@@ -297,8 +314,12 @@ class MopsMachine {
         yield* this.cycle();
       }
     } catch(e) {
-      yield new Event.FailState({message:"Runtime Error!"});
-      throw e;
+      if(e instanceof MopsByteError || e instanceof MopsMemoryError) {
+        yield new Event.FailState({message:e.message});
+      }
+      else {
+        throw e;
+      }
     }
     yield new Event.Halt();
   }

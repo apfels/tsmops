@@ -1,5 +1,11 @@
 import { MOPS_MAX_INTEGER, MOPS_MIN_INTEGER } from "../platform";
 
+class MopsByteError extends Error {
+  constructor(arg : string) {
+    super(arg);
+  }
+}
+
 class MopsByte {
   private _value: number;
 
@@ -13,7 +19,7 @@ class MopsByte {
   public set value(value: number) {
     if(value == null) { throw "Null Byte!"; }
     const int_value = Math.trunc(value); 
-    if(int_value < MOPS_MIN_INTEGER || int_value > MOPS_MAX_INTEGER) { throw "Out of Range!"; }
+    if(int_value < MOPS_MIN_INTEGER || int_value > MOPS_MAX_INTEGER) { throw new MopsByteError("Out of Range!"); }
     this._value = value;
   }
 
@@ -27,4 +33,4 @@ class MopsByte {
   }
 }
 
-export { MopsByte }
+export { MopsByte, MopsByteError }
