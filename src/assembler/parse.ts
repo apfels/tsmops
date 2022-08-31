@@ -209,7 +209,7 @@ class Parse {
     const labels = toks.slice(idx);
 
     if(instruction.length > 0 && toks[0].token_type == TokenType.white) {
-      this.diagnostics.extension(this.current_line, "Whitespace before mnemonics is an extension.", false);
+      this.diagnostics.extension(this.current_line, "Whitespace before mnemonics is an extension.", this.settings.initial_white);
     }
     if(instruction.length == 0 && labels.length > 0) {
       this.diagnostics.extension(this.current_line, "Labels on empty lines are an extension.", this.settings.empty_line_jumps);

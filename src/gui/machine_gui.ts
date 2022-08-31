@@ -288,6 +288,7 @@ class MachineGui {
     return {
       memory_size : MachineGui.memory_size,
       program_size : MachineGui.program_size,
+      initial_white : this.dom.setting.check_extended_syntax.checked,
       empty_line_jumps : this.dom.setting.check_extended_syntax.checked,
       jump_address : this.dom.setting.check_extended_syntax.checked,
       multiple_labels : this.dom.setting.check_extended_syntax.checked,

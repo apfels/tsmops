@@ -57,6 +57,7 @@ export class AssemblerSettings {
   program_size : number = 64;
   memory_size : number = 72;
 
+  initial_white : boolean = false;
   multiple_labels : boolean = false;
   empty_line_jumps : boolean = false;
   jump_address : boolean = false;
