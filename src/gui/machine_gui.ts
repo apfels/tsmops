@@ -260,7 +260,7 @@ class MachineGui {
     if(this.start_if_not_running()) {
       this.state.current_run.next();
     }
-    this.state.current_run.next().then((e) => {if(e.done) {this.state.current_run = undefined;}});
+    this.state.current_run.next().then((e) => {if(e.done) {this.state.current_run = undefined; this.dom.vm_view.style.boxShadow=""; }});
     this.dom.button.end.disabled = false;    
   }
 
