@@ -8,7 +8,7 @@ import { ArgType, ExecutionComparison, ExecutionOperator, Operation } from "../p
 import { MopsByte } from "../vm/mops_byte";
 
 class MachineGuiElements {
-  readonly vm_view = document.querySelector("#vm-view");
+  readonly vm_view = document.querySelector("#vm-view") as HTMLElement;
 
   readonly editor_main = document.querySelector("#editor-pane").querySelector("main");
   readonly memory_main = document.querySelector("#memory-pane").querySelector("main");
@@ -126,9 +126,9 @@ const write_anim = [
   {backgroundColor: "initial"},
 ];
 const halt_anim = [
-  {filter: "opacity(0.5) brightness(0.5)"},
-  {filter: "opacity(0.5) brightness(0.5)"},
-  {filter: "opacity(1) brightness(1)"},
+  {filter: "opacity(0.75)"},
+  {filter: "opacity(0.75)"},
+  {filter: "opacity(1)"},
 ];
 const anim_settings = {
   duration: 1500,
@@ -139,6 +139,8 @@ class MachineGui {
   static readonly memory_size = 72;
   static readonly program_size = 64;
   static readonly precompile_delay = 250;
+  static readonly pause_border = "0.5rem 0.5rem 0 #888 inset, -0.5rem -0.5rem 0 #888 inset";
+  static readonly running_border = "1rem 1rem 0 #888 inset, -1rem -1rem 0 #888 inset";
 
   private readonly dom = new MachineGuiElements();
   private readonly state = new MachineGuiState();
@@ -201,12 +203,17 @@ class MachineGui {
     this.disable_editor();
     this.dom.button.build.disabled = true;
     this.dom.button.end.disabled = false;
+
     if(this.state.running) {
+      this.dom.vm_view.style.boxShadow = MachineGui.pause_border;
+
       this.dom.button.run.classList.add("run");
       this.dom.button.run.classList.remove("pause");
       this.state.running = false;
     }
     else {
+      this.dom.vm_view.style.boxShadow = MachineGui.running_border;
+      
       this.dom.button.run.classList.add("pause");
       this.dom.button.run.classList.remove("run");
       this.start_if_not_running();
@@ -217,6 +224,8 @@ class MachineGui {
 
   end_action() {
     this.state.latest_animations = [ this.dom.vm_view.animate(halt_anim, anim_settings) ];
+
+    this.dom.vm_view.style.boxShadow = "none";
 
     this.dom.button.end.disabled = true;
     this.dom.button.build.disabled = false;
@@ -236,10 +245,23 @@ class MachineGui {
 
   step_action() {
     if(this.state.running || !this.state.current_build) { return; }
+
+    this.dom.vm_view.animate([
+      { boxShadow : MachineGui.pause_border },
+      { boxShadow : MachineGui.running_border },
+      { boxShadow : MachineGui.pause_border },
+    ],
+    {
+      duration: 240,
+      fill : "none",
+    })
+
+    this.dom.vm_view.style.boxShadow = MachineGui.pause_border;
     if(this.start_if_not_running()) {
       this.state.current_run.next();
     }
     this.state.current_run.next().then((e) => {if(e.done) {this.state.current_run = undefined;}});
+    this.dom.button.end.disabled = false;    
   }
 
   update_action() {
