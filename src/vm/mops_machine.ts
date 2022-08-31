@@ -188,15 +188,17 @@ class MopsMachine {
     });
 
     this.execution.opd = operand;
+
     yield new Event.RegisterWrite({
       target:"opd",
       value:operand.value
     });
 
     const cmp = new MopsByte((() => {
-      if(this.execution.acc < this.execution.opd) { return ExecutionComparison.lt; }
-      if(this.execution.acc == this.execution.opd) { return ExecutionComparison.eq; }
-      if(this.execution.acc > this.execution.opd) { return ExecutionComparison.gt; }
+      if(this.execution.acc.value < this.execution.opd.value) { return ExecutionComparison.lt; }
+      if(this.execution.acc.value == this.execution.opd.value) { return ExecutionComparison.eq; }
+      if(this.execution.acc.value > this.execution.opd.value) { return ExecutionComparison.gt; }
+      console.log("ERR!!");
       return undefined;
     })());
 
@@ -223,7 +225,7 @@ class MopsMachine {
     });
 
     if(cmp == condition) {
-      this.exec_jmp(tar);
+      yield* this.exec_jmp(tar);
     }
   }
 
