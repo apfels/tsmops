@@ -68,6 +68,7 @@ class MachineGuiState {
   precompile_timeout_id : ReturnType<typeof setTimeout>;
   current_build : BuildResult = undefined;
   current_run : AsyncGenerator<Event.MopsEvent>;
+  latest_animations : Animation[] = [];
 }
 
 function date_string() {
@@ -176,6 +177,7 @@ class MachineGui {
         if(ev.key == ".")         { ev.preventDefault(); this.step_action(); }
         if(ev.key == "ArrowLeft") { ev.preventDefault(); this.decrement_speed(); }
         if(ev.key == "ArrowRight"){ ev.preventDefault(); this.increment_speed(); }
+        if(ev.key == ",")         { ev.preventDefault(); this.replay_latest(); }
       }
     });
   }
@@ -376,7 +378,9 @@ class MachineGui {
         const value = parseInt(user_value) || 0;
 
         this.dom.queue_area.value = lines.splice(1).join("\n");
-        this.dom.queue_area.animate(read_anim, anim_settings);
+
+        this.state.latest_animations.push(this.dom.queue_area.animate(read_anim, anim_settings));
+        
         this.dom.reg.in.value = MopsByte.format(value);
         console.log("input", value);
         return value;
@@ -386,32 +390,40 @@ class MachineGui {
           this.dom.history_area.value += "\n";
         }
         this.dom.history_area.value += MopsByte.format(value);
-        this.dom.history_area.animate(write_anim, anim_settings);
+
+        this.state.latest_animations.push(this.dom.history_area.animate(write_anim, anim_settings));
+        
         console.log("output", value);
       }
     }).run();
 
+    const push_anim = (anim : Animation) => {
+      this.state.latest_animations.push(anim);
+    }
+
     for(const ev of machine) {
       if(!this.state.running) { yield; }
 
+      this.state.latest_animations = [];
+
       if(ev instanceof Event.Fetch) {
-        this.memory_gui.element_at(ev.address).animate(fetch_anim, anim_settings);
-        this.memory_gui.element_at(ev.address+1)?.animate(fetch_anim, anim_settings);
+        push_anim( this.memory_gui.element_at(ev.address).animate(fetch_anim, anim_settings) );
+        push_anim( this.memory_gui.element_at(ev.address+1)?.animate(fetch_anim, anim_settings) );
       }
       else if(ev instanceof Event.MemoryRead) {
-        this.memory_gui.element_at(ev.address).animate(read_anim, anim_settings);
+        push_anim( this.memory_gui.element_at(ev.address).animate(read_anim, anim_settings) );
       }
       else if(ev instanceof Event.MemoryWrite) {
-        this.memory_gui.element_at(ev.address).animate(write_anim, anim_settings);
+        push_anim( this.memory_gui.element_at(ev.address).animate(write_anim, anim_settings) );
         this.memory_gui.assign([ev.value], ev.address);
       }
       else if(ev instanceof Event.RegisterRead) {
         const reg_element = this.dom.named_reg(ev.target);
-        reg_element.animate(read_anim, anim_settings);
+        push_anim( reg_element.animate(read_anim, anim_settings) );
       }
       else if(ev instanceof Event.RegisterWrite) {
         const reg_element = this.dom.named_reg(ev.target);
-        reg_element.animate(write_anim, anim_settings);
+        push_anim( reg_element.animate(write_anim, anim_settings) );
         if(ev.target == "opr") {
           reg_element.value = nice_operator_string(ev.value);
         }
@@ -421,7 +433,7 @@ class MachineGui {
         else {
           if(ev.target == "res") {
             this.dom.reg.acc.value = MopsByte.format(ev.value);
-            this.dom.reg.acc.animate(write_anim, anim_settings);
+            push_anim( this.dom.reg.acc.animate(write_anim, anim_settings));
           }
           reg_element.value = MopsByte.format(ev.value);
         }
@@ -439,18 +451,25 @@ class MachineGui {
         const arg_value = ( ev.instruction.instruction.arg_type == ArgType.none ? "" : ev.argument.toString() );
         
         this.dom.reg.decode.value = op_name + " " + arg_prefix + arg_value;
-        this.dom.reg.decode.animate(write_anim, anim_settings);
+        push_anim( this.dom.reg.decode.animate(write_anim, anim_settings) );
       }
       else if(ev instanceof Event.FailState) {
         alert("Machine has entered fail state: " + ev.message);
       }
       else if(ev instanceof Event.Halt) {
-        this.dom.vm_view.animate(halt_anim, anim_settings);
+        push_anim( this.dom.vm_view.animate(halt_anim, anim_settings) );
         break;
       }
 
       const anim_time = parseInt(this.dom.setting.range_anim_time.max) - parseInt(this.dom.setting.range_anim_time.value) ?? 0.01;
       await new Promise(r => setTimeout(r, 100*anim_time));
+    }
+  }
+
+  replay_latest() {
+    for(const anim of this.state.latest_animations) {
+      anim.finish();
+      anim.play();
     }
   }
 }
