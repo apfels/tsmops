@@ -162,6 +162,7 @@ class MachineGui {
         if(ev.key == " ")         { ev.preventDefault(); this.dom.button.run.click(); }
         if(ev.key == "Backspace") { ev.preventDefault(); this.dom.button.end.click(); }
         if(ev.key == "s")         { ev.preventDefault(); this.dom.button.save.click(); }
+        if(ev.key == ".")         { ev.preventDefault(); this.step_action(); }
       }
     });
   }
@@ -193,11 +194,7 @@ class MachineGui {
     else {
       this.dom.button.run.classList.add("pause");
       this.dom.button.run.classList.remove("run");
-      if(!this.state.current_run) {
-        this.memory_gui.reset(MachineGui.memory_size);
-        this.clear_regs();
-        this.memory_gui.assign(this.state.current_build.executable);
-      }
+      this.start_if_not_running();
       this.state.running = true;
       this.run_until_paused(() => { this.end_action() });
     }
@@ -220,12 +217,32 @@ class MachineGui {
     anchor.click();
   }
 
+  step_action() {
+    if(this.state.running || !this.state.current_build) { return; }
+    if(this.start_if_not_running()) {
+      this.state.current_run.next();
+    }
+    this.state.current_run.next().then((e) => {if(e.done) {this.state.current_run = undefined;}});
+  }
+
   update_action() {
     this.end_action();
     this.dom.button.run.disabled = true;
     this.time_precompile(MachineGui.precompile_delay);
     this.clear_build();
     this.clear_regs();
+  }
+
+
+  start_if_not_running() {
+    if(!this.state.current_run) {
+      this.memory_gui.reset(MachineGui.memory_size);
+      this.clear_regs();
+      this.memory_gui.assign(this.state.current_build.executable);
+      this.state.current_run = this.run_machine();
+      return true;
+    }
+    return false;
   }
 
 
@@ -300,8 +317,6 @@ class MachineGui {
   }
 
   async run_until_paused(when_done : () => void) {
-    if(!this.state.current_run) { this.state.current_run = this.run_machine(); }
-
     const proxy = (gen) => {return{
       next() { return gen.next(); },
       [Symbol.asyncIterator]() { return this; },
