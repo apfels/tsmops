@@ -295,8 +295,9 @@ class MopsMachine {
       while(!this.halted) {
         yield* this.cycle();
       }
-    } catch {
+    } catch(e) {
       yield new Event.FailState({message:"Runtime Error!"});
+      throw e;
     }
     yield new Event.Halt();
   }

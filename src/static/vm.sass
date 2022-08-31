@@ -7,19 +7,63 @@
 
 #vm-view .pane
   border: $default-border
+  min-height: 6rem
+  min-width: 18rem
+
+#vm-view .pane-grid
+  display: grid
+  text-align: center
+  height: 100%
+  align-items: center
+  gap: 0.5rem
+  padding: 1rem
 
 #memory-pane
   grid-area: mem
-  min-width: max-content
+  min-width: max-content !important
 
 #control-pane
   grid-area: con
 
+#control-pane main
+  grid-template-columns: repeat(2, 1fr)
+  span
+    white-space: nowrap
+  span:last-child
+    grid-column: span 2
+
 #execution-pane
   grid-area: exe
 
+#execution-pane main
+  grid-template-columns: repeat(3, 1fr)
+
 #io-pane
   grid-area: io
+
+#io-pane main
+  grid-template-columns: repeat(2, 1fr)
+  grid-auto-rows: min-content auto
+
+.reg
+  all: unset
+  width: 4rem
+  margin: 0
+  padding: 0
+  border: $default-border
+
+.reg.reg-wide
+  width: 8rem
+
+#io-pane textarea
+  all: unset
+  font: inherit
+  border: $default-border
+  width: 4rem
+  height: 4rem
+  margin: 0
+  padding: 0
+  white-space: pre
 
 #memory-pane main
   display: grid

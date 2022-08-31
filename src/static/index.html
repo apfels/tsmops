@@ -15,6 +15,7 @@
   <main>
     <fieldset>
       <input type="checkbox" id="check-extended-syntax"><label for="check-extended-syntax">Extended Syntax</label>
+      <input type="range" id="range-anim-time" min="0" max="10" step="1" value="5"><label for="range-anim-time">Speed</label>
     </fieldset>
     <hr>
     <table>
@@ -50,15 +51,30 @@
   </div>
   <div class="pane" id="control-pane">
     <header>Control</header>
-    <main></main>
+    <main class="pane-grid">
+      <span>IP<input id="reg-ip" class="reg" type="text"></span>
+      <span>IR<input id="reg-ir-lo" class="reg" type="text"><input id="reg-ir-hi" class="reg" type="text"></span>
+      <span>Decode<input id="reg-decode" class="reg reg-wide" type="text"></span>
+    </main>
   </div>
   <div class="pane" id="execution-pane">
     <header>Execution</header>
-    <main></main>
+    <main class="pane-grid">
+      <span>ACC<br><input id="reg-acc" class="reg" type="text"></span>
+      <span>OPR<br><input id="reg-opr" class="reg" type="text"></span>
+      <span>OPD<br><input id="reg-opd" class="reg" type="text"></span>
+      <span>CMP<br><input id="reg-cmp" class="reg" type="text"></span>
+      <span>RES<br><input id="reg-res" class="reg" type="text"></span>
+    </main>
   </div>
   <div class="pane" id="io-pane">
     <header>IO</header>
-    <main></main>
+    <main class="pane-grid">
+      <span>IN<br><input id="reg-in" class="reg" type="text"></span>
+      <span>OUT<br><input id="reg-out" class="reg" type="text"></span>
+      <span>Queue<br><textarea id="input-queue-area"></textarea></span>
+      <span>History<br><textarea id="output-history-area"></textarea></span>
+    </main>
   </div>
 </div>
 
