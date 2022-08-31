@@ -17,6 +17,18 @@ $default-border: 1px solid $border-color
   font-style: italic
   src: url("font/RedHatMono-Italic-VariableFont_wght.ttf")
 
+/* This is not actually Red Hat Mono, but fallback for arrow block. */
+@font-face
+  font-family: "Red Hat Mono"
+  font-style: normal
+  src: url("font/JetBrainsMono-VariableFont_wght.ttf")
+  unicode-range: U+2190-21FF
+@font-face
+  font-family: "Red Hat Mono"
+  font-style: italic
+  src: url("font/JetBrainsMono-Italic-VariableFont_wght.ttf")
+  unicode-range: U+2190-21FF
+
 html, body
   margin: 0
   padding: 0

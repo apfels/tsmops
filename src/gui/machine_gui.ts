@@ -163,6 +163,8 @@ class MachineGui {
         if(ev.key == "Backspace") { ev.preventDefault(); this.dom.button.end.click(); }
         if(ev.key == "s")         { ev.preventDefault(); this.dom.button.save.click(); }
         if(ev.key == ".")         { ev.preventDefault(); this.step_action(); }
+        if(ev.key == "ArrowLeft") { ev.preventDefault(); this.decrement_speed(); }
+        if(ev.key == "ArrowRight"){ ev.preventDefault(); this.increment_speed(); }
       }
     });
   }
@@ -283,6 +285,21 @@ class MachineGui {
     };
   }
 
+  increment_speed() {
+    this.dom.setting.range_anim_time.value = Math.min(
+      parseInt(this.dom.setting.range_anim_time.value)+1,
+      parseInt(this.dom.setting.range_anim_time.max)
+    ).toString();
+  }
+
+  decrement_speed() {
+    this.dom.setting.range_anim_time.value = Math.max(
+      parseInt(this.dom.setting.range_anim_time.value)-1,
+      parseInt(this.dom.setting.range_anim_time.min)
+    ).toString();
+  }
+
+
   make_build() : boolean {
     const asm = new Assemble(this.get_settings(), this.editor_gui.value());
     if(asm.diagnostics.error_state) { return false; }
@@ -396,7 +413,7 @@ class MachineGui {
           switch(ev.instruction.instruction.arg_type) {
             case ArgType.adr_dst: return "→ $"
             case ArgType.adr_src: return "← $";
-            case ArgType.tar:     return "↳ $";
+            case ArgType.tar:     return "→ $";
             default:              return "";
           }
         })();
