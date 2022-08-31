@@ -216,6 +216,8 @@ class MachineGui {
   }
 
   end_action() {
+    this.state.latest_animations = [ this.dom.vm_view.animate(halt_anim, anim_settings) ];
+
     this.dom.button.end.disabled = true;
     this.dom.button.build.disabled = false;
     this.dom.button.run.classList.add("run");
@@ -376,11 +378,8 @@ class MachineGui {
         }
 
         const value = parseInt(user_value) || 0;
-
         this.dom.queue_area.value = lines.splice(1).join("\n");
-
         this.state.latest_animations.push(this.dom.queue_area.animate(read_anim, anim_settings));
-        
         this.dom.reg.in.value = MopsByte.format(value);
         console.log("input", value);
         return value;
@@ -457,7 +456,6 @@ class MachineGui {
         alert("Machine has entered fail state: " + ev.message);
       }
       else if(ev instanceof Event.Halt) {
-        push_anim( this.dom.vm_view.animate(halt_anim, anim_settings) );
         break;
       }
 
