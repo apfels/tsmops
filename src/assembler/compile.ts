@@ -62,7 +62,6 @@ class Compile {
   }
 
   private compile() {
-    console.log(this.parse_tree);
     const size_lower_bound = this.parse_tree.instruction_lines.size / 2;
     const last_instruction = [...this.parse_tree.instruction_lines.values()].pop();
     const end = this.parse_tree.instruction_lines.get(this.first_end);
@@ -82,8 +81,13 @@ class Compile {
       this.compile_instruction(ln);
     }
 
-    if(this.first_end != null && last_instruction.instruction.operation != Operation.end) {
-      this.diagnostics.info(this.first_end, "Code following an end instruction.")
+    if(this.first_end != null && last_instruction.line != this.first_end) {
+      if(this.settings.past_end) {
+        this.diagnostics.info(this.first_end, "Code following an end instruction.")
+      }
+      else {
+        this.diagnostics.warning(this.first_end, "Code after end is disregarded in strict mode.")
+      }
     }
 
     if(!this.first_end) {

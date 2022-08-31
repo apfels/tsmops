@@ -128,6 +128,7 @@ const anim_settings = {
 class MachineGui {
   static readonly memory_size = 72;
   static readonly program_size = 64;
+  static readonly precompile_delay = 250;
 
   private readonly dom = new MachineGuiElements();
   private readonly state = new MachineGuiState();
@@ -215,7 +216,7 @@ class MachineGui {
   update_action() {
     this.end_action();
     this.dom.button.run.disabled = true;
-    this.time_precompile(250);
+    this.time_precompile(MachineGui.precompile_delay);
     this.clear_build();
     this.clear_regs();
   }
@@ -243,6 +244,7 @@ class MachineGui {
     this.dom.settings_pane.classList.remove("settings-shown");
     const inputs = this.dom.settings_pane.querySelectorAll("input");
     for(const i of inputs) { i.disabled = true; }
+    this.time_precompile(MachineGui.precompile_delay);
   }
 
   get_settings() : Partial<AssemblerSettings> {

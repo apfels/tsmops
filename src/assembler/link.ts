@@ -17,13 +17,15 @@ class Link {
 
   private link() {
     for(const e of this.build.link_table.entries()) {
-      const target = (this.settings.empty_line_jumps)
-        ?  [...this.build.line_offsets].find(x => x && x[0] >= e[1].to)[1]
-        : this.build.line_offsets.get(e[1].to);
+      const match = [...this.build.line_offsets].find(x => x && x[0] >= e[1].to)
+      const target = match ? match[1] : null;
       if(target == null) {
-        this.diagnostics.error(e[1].from, "Jump does not target any instruction.");
+        this.diagnostics.error(e[1].from, "Jump does not target anything.");
       }
-      if(target > this.first_end) {
+      if(!this.build.line_offsets.has(e[1].to)) {
+        this.diagnostics.extension(e[1].from, "Empty line jumps are an extension.", this.settings.empty_line_jumps);
+      }
+      if(e[1].to > this.first_end) {
         this.diagnostics.extension(e[1].from, "Jump past end instruction is an extension.", this.settings.past_end);
       }
       this.build.executable[e[0]] = target;

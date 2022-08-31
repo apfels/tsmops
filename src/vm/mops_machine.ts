@@ -198,7 +198,6 @@ class MopsMachine {
       if(this.execution.acc.value < this.execution.opd.value) { return ExecutionComparison.lt; }
       if(this.execution.acc.value == this.execution.opd.value) { return ExecutionComparison.eq; }
       if(this.execution.acc.value > this.execution.opd.value) { return ExecutionComparison.gt; }
-      console.log("ERR!!");
       return undefined;
     })());
 
