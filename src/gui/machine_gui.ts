@@ -201,7 +201,6 @@ class MachineGui {
 
   end_action() {
     this.dom.button.end.disabled = true;
-    this.dom.button.build.disabled = false;
     this.state.running = false;
     this.state.current_run = undefined;
     this.enable_editor();
