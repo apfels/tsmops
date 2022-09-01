@@ -2,7 +2,7 @@
 An implementation of the MOPS system in TypeScript.
 
 == What is MOPS, and TsMops
-*MOPS* is an educational virtual computer originally implemented in python. While _'`free as in beer`'_ freeware, MOPS is not _'`free as in freedom`'_ Free Software, and its source code is not publicly available. In addition, original MOPS is no longer maintained. Original MOPS may be found http://www.viktorianer.de/info/mops.html[here]. (third party site)
+*MOPS* is an educational virtual computer originally implemented in python. While _free as in beer_ freeware, MOPS is not _free as in freedom_ Free Software, and its source code is not publicly available. In addition, original MOPS is no longer maintained. Original MOPS may be found http://www.viktorianer.de/info/mops.html[here]. (third party site)
 
 *TsMops* is a Free implementation of the virtual assembler and hardware platform defined by MOPS, in TypeScript. It is designed to run client-side in any modern web browser. In its default mode, both the assembler and virtual hardware try to closely emulate original MOPS behavior; however, a number of syntax extensions are available, and will be discussed later.
 
