@@ -22,7 +22,21 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build
+    - name: github-pages
       run: |
         npm install
         npx webpack
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy GitHub Pages site
+      id: deployment
+      uses: actions/deploy-pages@v1.0.10
