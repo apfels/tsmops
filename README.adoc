@@ -49,3 +49,11 @@ MOPS bytes are exclusively interpreted as integers in the range [-9999, 9999]. T
 - _Nop_: Allow the _nop_ mnemonic that translates to opcode 0. This is the No-Operation.
 
 The TsMops virtual machine should behave the same as original MOPS for all programs allowed in strict mode, and behave predictably and constistently for other programs.
+
+== Building
+This project uses npm and webpack. To generate the site, run:
+----
+npm install
+npx webpack
+----
+Files will be placed in _dist_. Simply open index.html in your browser. An instance generated from main is also available at https://apfels.github.io/tsmops/.
