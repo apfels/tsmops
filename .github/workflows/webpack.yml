@@ -1,10 +1,20 @@
-name: NodeJS with Webpack
+name: Webpack to Pages
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -13,28 +23,30 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: "16"
 
-    - name: page-build
+    - name: Setup pages
+      uses: actions/configure-pages@v2
+
+    - name: Build
       run: |
         npm install
         npx webpack
-
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: ./dist
   deploy:
     needs: build
-    permissions:
-      pages: write
-      id-token: write
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-    - name: Deploy GitHub Pages site
-      id: deployment
-      uses: actions/deploy-pages@v1.0.10
-      with:
-        artifact_name: page-build
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
