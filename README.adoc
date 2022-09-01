@@ -1,2 +1,51 @@
-= tsmops – MOPS in your Browser
+= TsMops – MOPS in your Browser
 An implementation of the MOPS system in TypeScript.
+
+== What is MOPS, and TsMops
+*MOPS* is an educational virtual computer originally implemented in python. While _'`free as in beer`'_ freeware, MOPS is not _'`free as in freedom`'_ Free Software, and its source code is not publicly available. In addition, original MOPS is no longer maintained. Original MOPS may be found http://www.viktorianer.de/info/mops.html[here]. (third party site)
+
+*TsMops* is a Free implementation of the virtual assembler and hardware platform defined by MOPS, in TypeScript. It is designed to run client-side in any modern web browser. In its default mode, both the assembler and virtual hardware try to closely emulate original MOPS behavior; however, a number of syntax extensions are available, and will be discussed later.
+
+== The MOPS Platform
+MOPS bytes are exclusively interpreted as integers in the range [-9999, 9999]. The system memory is 72 bytes, of which the first 64 are reserved for program code, and the remaining eight are for data.
+
+.Instruction Set
+[options="header"]
+|========================================================================================
+| Mnemonic  | Opcode | Explanation.
+| nop†      | 00     | No Operation.
+| ld _adr_  | 10     | Load value at _adr_ into _acc_.
+| ld _val_  | 11     | Load value _val_ into _acc_.
+| st _adr_  | 12     | Store _acc_ at _adr_.
+| in _adr_  | 20     | Store next input value at _adr_.
+| out _adr_ | 22     | Write value at _adr_ to _out_.
+| out _val_ | 23     | Write value _val_ to _out_.
+| add _adr_ | 30     | Add value at _adr_ to _acc_.
+| add _val_ | 31     | Add value _val_ to _acc_.
+| sub _adr_ | 32     | Subtract value at _adr_ from _acc_.
+| sub _val_ | 33     | Subtract value _val_ from _acc_.
+| mul _adr_ | 34     | Multiply _acc_ by value at _adr_.
+| mul _val_ | 35     | Multiply _acc_ by value _val_.
+| div _adr_ | 36     | Divide _acc_ by value at _adr_.
+| div _val_ | 37     | Divide _acc_ by value _val_.
+| mod _adr_ | 38     | Remainder of truncated divide _acc_ by value at _adr_.
+| mod _val_ | 39     | Remainder of truncated divide _acc_ by value _val_.
+| cmp _adr_ | 40     | Compare _acc_ to value at _val_.
+| cmp _adr_ | 41     | Compare _acc_ to value _val_.
+| jmp _tar_ | 50     | Unconditionally jump to reference _tar_.
+| jlt _tar_ | 52     | Jump to reference _tar_ if the latest comparison had _acc_ *<* _opd_.
+| jeq _tar_ | 54     | Jump to reference _tar_ if the latest comparison had _acc_ *=* _opd_.
+| jgt _tar_ | 56     | Jump to reference _tar_ if the latest comparison had _acc_ *>* _opd_.
+| end       | 60     | End of program. Halt.
+|========================================================================================
+† _nop_ is a TsMops extension. Original MOPS does not recognize this mnemonic.
+
+== TsMops Syntax Extensions
+- _Initial Whitespace_: Allow lines containing a mnemonic to start with whitespace. This whitespace will be disregarded.
+- _Multiple Labels_: Allow multiple label definitions on a single line.
+- _Empty Line Jumps_: Allow jumping to lines that do not translate to an instruction, and allow label definitions on those lines.
+- _Jump to Address_: Allow an address literal as argument for jumps. The address will not be linked, but added to the binary as-is.
+- _Past End_: Allow control flow past an _end_ instruction. Programs do not need to contain an _end_ instruction. Execution will _not_ be halted if no end instruction is encountered.
+- _Nop_: Allow the _nop_ mnemonic that translates to opcode 0. This is the No-Operation.
+
+The TsMops virtual machine should behave the same as original MOPS for all programs allowed in strict mode, and behave predictably and constistently for other programs.
