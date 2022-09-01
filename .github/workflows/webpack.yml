@@ -9,20 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 16.x]
     
     steps:
     - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 16.x
 
-    - name: github-pages
+    - name: page-build
       run: |
         npm install
         npx webpack
@@ -40,3 +36,5 @@ jobs:
     - name: Deploy GitHub Pages site
       id: deployment
       uses: actions/deploy-pages@v1.0.10
+      with:
+        artifact_name: page-build
